@@ -43,7 +43,7 @@ if [[ ! -f "$START_SCRIPT" ]]; then
   exit 1
 fi
 
-# 4) Patch -scenario if missing, or replace if FORCE_SCENARIO=1
+# 4) Patch -scenario into SERVER_CMD variable
 if grep -q -- "-scenario:" "$START_SCRIPT"; then
   if [[ "$FORCE_SCENARIO" == "1" ]]; then
     echo "[*] Replacing existing scenario with ${SCENARIO} in $START_SCRIPT"
@@ -53,16 +53,8 @@ if grep -q -- "-scenario:" "$START_SCRIPT"; then
 else
   echo "[*] Injecting required scenario flag into $START_SCRIPT"
   cp "$START_SCRIPT" "$START_SCRIPT.bak" || true
-  awk -v flag="-scenario:${SCENARIO}" '
-    NF{last=NR} {lines[NR]=$0} END{
-      for(i=1;i<=NR;i++){
-        if(i==last){
-          if(index(lines[i], flag)==0){ print lines[i]" "flag }
-          else { print lines[i] }
-        } else print lines[i]
-      }
-    }
-  ' "$START_SCRIPT" > "$START_SCRIPT.tmp" && mv "$START_SCRIPT.tmp" "$START_SCRIPT"
+  # Inject into SERVER_CMD variable (find line with SERVER_CMD= and add flag before closing quote)
+  sed -i '/^SERVER_CMD=/s/"$/ -scenario:'"${SCENARIO}"'"/' "$START_SCRIPT"
 fi
 
 chmod +x "$START_SCRIPT"
