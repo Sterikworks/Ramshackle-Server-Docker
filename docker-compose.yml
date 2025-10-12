@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  ramshackle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ramshackle-server
+    restart: unless-stopped
+
+    ports:
+      - "7777:7777/udp"   # game port (adjust if needed)
+      - "27015:27015/udp" # query port (adjust if needed)
+
+    volumes:
+      - ./data/server:/srv/ramshackle/server
+      - ./data/steamcmd:/srv/ramshackle/steamcmd
+      - ./data/saves:/home/steam/.config/Mountainous Development/REMProject
+
+    environment:
+      # === STEAM CREDENTIALS (REQUIRED) ===
+      - STEAM_USER=mountainousbuilder       # your Steam username
+      - STEAM_PASS=your_password_here       # your Steam password
+      - STEAM_GUARD=                        # Steam Guard code if prompted
+
+      # === WORLD SETTINGS (REQUIRED) ===
+      - SCENARIO=MyWorld                    # REQUIRED: change this to your world name!
+
+      # === SERVER BRANCH ===
+      - BRANCH=development                  # "public" or "development"
+      - BRANCH_PASSWORD=                    # password if branch requires it
+
+      # === OPTIONAL SETTINGS ===
+      - MANIFEST_ID=                        # pin to specific version (leave empty for latest)
+      - EXTRA_ARGS=                         # additional launch arguments
+      - FORCE_SCENARIO=0                    # set to 1 to force replace existing -scenario flag
+
+      # === FILE OWNERSHIP (Linux/Mac) ===
+      - PUID=1000                           # your user ID (run 'id' to find)
+      - PGID=1000                           # your group ID
+
+      # === ADVANCED ===
+      - RETRIES=3                           # retry attempts for Steam downloads
+      - RETRY_SLEEP=10                      # seconds between retries
+
+      # === FIXED VALUES (rarely change) ===
+      - APP_ID=4021040
+      - DEPOT_ID=4021043
+      - PLATFORM=linux
+      - BITNESS=64
+
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
