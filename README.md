@@ -20,7 +20,7 @@ Edit `docker-compose.yml` and set your values in the `environment:` section:
 
 ```yaml
 environment:
-  - STEAM_USER=mountainousbuilder       # your Steam username
+  - STEAM_USER=your_steam_username      # your Steam username
   - STEAM_PASS=your_password_here       # your Steam password
   - SCENARIO=MyWorld                    # REQUIRED: change this to your world name!
 ```

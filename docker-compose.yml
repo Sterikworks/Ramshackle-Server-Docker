@@ -19,7 +19,7 @@ services:
 
     environment:
       # === STEAM CREDENTIALS (REQUIRED) ===
-      - STEAM_USER=mountainousbuilder       # your Steam username
+      - STEAM_USER=your_steam_username      # your Steam username
       - STEAM_PASS=your_password_here       # your Steam password
       - STEAM_GUARD=                        # Steam Guard code if prompted
 
