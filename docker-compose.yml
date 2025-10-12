@@ -30,8 +30,8 @@ services:
 
       # === OPTIONAL SETTINGS ===
       - MANIFEST_ID=                        # pin to specific version (leave empty for latest)
-      - EXTRA_ARGS=                         # additional launch arguments
-      - FORCE_SCENARIO=0                    # set to 1 to force replace existing -scenario flag
+      - EXTRA_ARGS=-batchmode -nographics -debug -lobby -end  # server launch arguments
+      - SERVER_BIN=/srv/ramshackle/server/REMProject.x86_64   # run binary directly, bypass start script
 
       # === FILE OWNERSHIP (Linux/Mac) ===
       - PUID=1000                           # your user ID (run 'id' to find)
