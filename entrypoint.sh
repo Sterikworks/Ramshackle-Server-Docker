@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Fix permissions for volume mounts (runs as root, then drops to steam user)
+PUID="${PUID:-1000}"
+PGID="${PGID:-1000}"
+
+echo "[*] Ensuring correct permissions for volumes..."
+mkdir -p /srv/ramshackle/server /srv/ramshackle/steamcmd "/home/steam/.config/Mountainous Development/REMProject"
+chown -R "${PUID}:${PGID}" /srv/ramshackle "/home/steam/.config"
+
+# Drop to steam user and continue
+if [ "$(id -u)" = "0" ]; then
+  echo "[*] Dropping privileges to steam user (${PUID}:${PGID})..."
+  exec gosu steam "$0" "$@"
+fi
+
+# Now running as steam user
 export INSTALL_DIR="${INSTALL_DIR:-/srv/ramshackle/server}"
 export STEAMCMD_DIR="${STEAMCMD_DIR:-/srv/ramshackle/steamcmd}"
 export START_SCRIPT="${START_SCRIPT:-start_dedicated_server.sh}"
