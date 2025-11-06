@@ -7,8 +7,10 @@ services:
     restart: unless-stopped
 
     ports:
-      - "7777:7777/udp"   # game port (adjust if needed)
-      - "27015:27015/udp" # query port (adjust if needed)
+      - "27015:27015/udp" # steam port (do i even need this??)
+      - "4999-5010:4999-5010/udp"   # lobby + battle-room port range (UDP)
+      - "4999-5010:4999-5010/tcp"   # lobby + battle-room port range (TCP)
+      # Use the above compact range instead of individual port mappings.
 
     volumes:
       - ./data/server:/srv/ramshackle/server
@@ -47,8 +49,15 @@ services:
       - PLATFORM=linux
       - BITNESS=64
 
+    # Healthcheck kept but made intentionally conservative to avoid frequent container
+    # restarts which can cause repeated steamcmd logins during startup.
+    # If you want to disable the healthcheck entirely, set this to 'none' or remove
+    # the block below.
     healthcheck:
       test: ["CMD", "/usr/local/bin/healthcheck.sh"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
+      # Long interval reduces chance of repeated restart loops / login spam.
+      interval: 5m
+      # Allow more time for server to respond during cold starts.
+      timeout: 30s
+      # Fewer retries before marking unhealthy; tune as needed.
+      retries: 3
