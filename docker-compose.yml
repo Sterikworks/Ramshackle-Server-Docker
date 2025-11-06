@@ -18,10 +18,12 @@ services:
       - ./data/saves:/home/steam/.config/Mountainous Development/REMProject
 
     environment:
-      # === STEAM CREDENTIALS (REQUIRED) ===
-      - STEAM_USER=your_steam_username      # your Steam username
-      - STEAM_PASS=your_password_here       # your Steam password
-      - STEAM_GUARD=                        # Steam Guard code if prompted
+      # === STEAM CREDENTIALS ===
+      # SteamCMD will use anonymous login by default. If you need to use a
+      # real account (not recommended for automation), override these.
+      - STEAM_USER=anonymous
+      - STEAM_PASS=
+      - STEAM_GUARD=
 
       # === WORLD SETTINGS (REQUIRED) ===
       - SCENARIO=MyWorld                    # REQUIRED: change this to your world name!
@@ -59,5 +61,5 @@ services:
       interval: 5m
       # Allow more time for server to respond during cold starts.
       timeout: 30s
-      # Fewer retries before marking unhealthy; tune as needed.
-      retries: 3
+      # On user request, use only 1 retry so external watchers/alerts trigger quickly.
+      retries: 1
