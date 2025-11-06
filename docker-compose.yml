@@ -44,6 +44,10 @@ services:
       # === ADVANCED ===
       - RETRIES=3                           # retry attempts for Steam downloads
       - RETRY_SLEEP=10                      # seconds between retries
+      # === AUTO-UPDATE ===
+      # If true, the container will run `app_update ${APP_ID} validate` on each container start.
+      # Set to false to disable automatic updates at container startup.
+      - AUTO_UPDATE=true
 
       # === FIXED VALUES (rarely change) ===
       - APP_ID=4021040

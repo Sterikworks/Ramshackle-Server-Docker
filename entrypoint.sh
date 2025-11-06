@@ -25,8 +25,19 @@ export SCENARIO="${SCENARIO:?set SCENARIO to your world name}"
 export EXTRA_ARGS="${EXTRA_ARGS:-}"
 export SOFT_RESTART="${SOFT_RESTART:-0}" # if the game supports in-proc restart
 
-# 1) Update / install server files
-/usr/local/bin/ramshackle_server_update.sh
+# 1) Update / install server files (controlled by AUTO_UPDATE)
+# Default to true so existing behavior remains the same unless overridden.
+AUTO_UPDATE="${AUTO_UPDATE:-true}"
+echo "[*] AUTO_UPDATE=${AUTO_UPDATE}"
+case "${AUTO_UPDATE,,}" in
+  1|true|yes|y)
+    echo "[*] AUTO_UPDATE enabled; running server update..."
+    /usr/local/bin/ramshackle_server_update.sh
+    ;;
+  *)
+    echo "[*] AUTO_UPDATE disabled; skipping server update."
+    ;;
+esac
 
 cd "${INSTALL_DIR}"
 
