@@ -1,7 +1,7 @@
 services:
   ramshackle:
     build:
-      context: .
+      context: https://github.com/Sterikworks/Ramshackle-Server-Docker.git
       dockerfile: Dockerfile
     container_name: ramshackle-server
     restart: unless-stopped
