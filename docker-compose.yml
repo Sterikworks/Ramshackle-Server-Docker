@@ -7,10 +7,9 @@ services:
     restart: unless-stopped
 
     ports:
-      - "27015:27015/udp" # steam port (do i even need this??)
       - "4999-5010:4999-5010/udp"   # lobby + battle-room port range (UDP)
       - "4999-5010:4999-5010/tcp"   # lobby + battle-room port range (TCP)
-      # Use the above compact range instead of individual port mappings.
+      # the game's lobby sits on {port}, steam broadcasts on {port -1}, each battleroom is {port +1,2,3..etc}
 
     volumes:
       - ./data/server:/srv/ramshackle/server
@@ -29,7 +28,7 @@ services:
       - SCENARIO=MyWorld                    # REQUIRED: change this to your world name!
 
       # === SERVER BRANCH ===
-      - BRANCH=development                  # "public" or "development"
+      - BRANCH=development                  # "default" or "development" (steam branches)
       - BRANCH_PASSWORD=                    # password if branch requires it
 
       # === OPTIONAL SETTINGS ===
@@ -38,8 +37,8 @@ services:
       - SERVER_BIN=/srv/ramshackle/server/REMProject.x86_64   # run binary directly, bypass start script
 
       # === FILE OWNERSHIP (Linux/Mac) ===
-      - PUID=1000                           # your user ID (run 'id' to find)
-      - PGID=1000                           # your group ID
+      - PUID=1000                           # idk what this does it just makes linux shut up
+      - PGID=1000                           #
 
       # === ADVANCED ===
       - RETRIES=3                           # retry attempts for Steam downloads
