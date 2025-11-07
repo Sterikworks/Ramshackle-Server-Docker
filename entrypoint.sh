@@ -41,20 +41,29 @@ esac
 
 cd "${INSTALL_DIR}"
 
-# 2) If a direct binary is specified, prefer it.
+# 2) Set up Steam environment variables for proper initialization
+# The SteamAppId tells Steam which app to initialize (for plugin loading, etc.)
+export SteamAppId=3800200
+# Add the Plugins directory to the library path so Steam can find steamclient.so
+export LD_LIBRARY_PATH="${INSTALL_DIR}/REMProject_Data/Plugins:${LD_LIBRARY_PATH:-}"
+
+echo "[*] Set SteamAppId=${SteamAppId}"
+echo "[*] Set LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+
+# 3) If a direct binary is specified, prefer it.
 if [[ -n "$SERVER_BIN" && -x "$SERVER_BIN" ]]; then
   echo "[*] Launching server binary directly: $SERVER_BIN"
   exec "$SERVER_BIN" -scenario:"${SCENARIO}" ${EXTRA_ARGS}
 fi
 
-# 3) Fallback to vendor start script
+# 4) Fallback to vendor start script
 if [[ ! -f "$START_SCRIPT" ]]; then
   echo "[!] Cannot find $START_SCRIPT in $INSTALL_DIR" >&2
   ls -la
   exit 1
 fi
 
-# 4) Patch -scenario into SERVER_CMD variable
+# 5) Patch -scenario into SERVER_CMD variable
 if grep -q -- "-scenario:" "$START_SCRIPT"; then
   if [[ "$FORCE_SCENARIO" == "1" ]]; then
     echo "[*] Replacing existing scenario with ${SCENARIO} in $START_SCRIPT"
@@ -70,14 +79,14 @@ fi
 
 chmod +x "$START_SCRIPT"
 
-# 5) Graceful signal handling: forward SIGTERM to child
+# 6) Graceful signal handling: forward SIGTERM to child
 _term(){
   echo "[*] Caught SIGTERM, forwarding to server..."
   pkill -TERM -P $$ || true
 }
 trap _term TERM INT
 
-# 6) Launch
+# 7) Launch
 ulimit -n ${ULIMIT_NOFILE:-1048576} || true
 mkdir -p "${LOG_DIR:-./logs}"
 
